@@ -23,7 +23,6 @@ public class WalletService {
        return this.userRepository.findAll();
     }
 
-
     public String saveNewPass(NewPasswordToWalletDTO newPasswordToWalletDTO) {
         AppUser appUser = this.userRepository
                 .findAppUserByUsernameAndToken(newPasswordToWalletDTO.getLogin(), newPasswordToWalletDTO.getToken()).orElse(null);
@@ -60,7 +59,9 @@ public class WalletService {
         String encryptedPass = this.passwordRepository.findPasswordById(id).getPassword();
         try{
              decrypted = AESenc.decrypt(encryptedPass, AESenc.generateKey(appUser.getSalt()));
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Incorrect password or salt to decode!");
+        }
 
         return decrypted;
     }
